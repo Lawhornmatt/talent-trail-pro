@@ -2,6 +2,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
 
+import {RegisterLink, LoginLink} from "@kinde-oss/kinde-auth-nextjs/components";
+
 export default function LogInOut() {
 
     const [user, setUser] = useState(null);
@@ -17,11 +19,15 @@ export default function LogInOut() {
 
     return (
         <div className="flex flex-col items-center justify-around space-y-4">
+            <LoginLink className="bg-blue-300 p-2">Sign in</LoginLink>
+            <RegisterLink className="bg-blue-300 p-2">Sign up</RegisterLink>
+            {/* 
             {user ? (
                 <button className="bg-blue-300 p-2" onClick={doB}>Log Out</button>       
                 ) : (
                 <button className="bg-blue-300 p-2" onClick={doA}>Log In</button>
             )}
+             */}
         </div>
     );
 };
