@@ -10,5 +10,6 @@ export async function GET() {
        return Response.json(data);
    } catch (e) {
        console.error(e);
+       return Response.json("Something went wrong");
    };
 };
