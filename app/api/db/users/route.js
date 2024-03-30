@@ -5,11 +5,10 @@ export async function GET() {
    try {
        const client = await clientPromise;
 
-       const users = await client.db(process.env.MONGO_DB).collection("users").find().toArray();
+       const data = await client.db(process.env.MONGO_DB).collection("users").find().toArray();
        
-    //    console.log(users);
-       return Response.json(users)
+       return Response.json(data);
    } catch (e) {
        console.error(e);
-   }
+   };
 };
