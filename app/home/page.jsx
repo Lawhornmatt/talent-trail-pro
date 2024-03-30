@@ -23,11 +23,11 @@ export default function Home() {
   const objSample = Object.keys(sampleobj).length;
 
     return (
-      <div>
-         <Nav/>
-      <h1> Hello Home </h1>
-      number of applications {objSample}
-      </div>
+      <main className="flex flex-col items-center justify-start p-4 space-y-6 h-screen">
+        <Nav/>
+        <h1> Hello Home </h1>
+        <p>number of applications {objSample}</p>
+      </main>
     );
   }
   
