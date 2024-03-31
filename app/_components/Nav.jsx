@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import {LoginLink, LogoutLink} from "@kinde-oss/kinde-auth-nextjs/components";
+import {RegisterLink, LoginLink, LogoutLink} from "@kinde-oss/kinde-auth-nextjs/components";
 
 
 export default function Nav({ user }) {
@@ -21,12 +21,17 @@ export default function Nav({ user }) {
             {
             user ? (
                         <li>
-                            <LogoutLink className="bg-blue-300 px-1">Log out</LogoutLink>
+                            <LogoutLink className="bg-blue-300 px-1">Log Out</LogoutLink>
                         </li>
                     ) : (
-                        <li>
-                            <LoginLink className="bg-blue-300 px-1">Sign in</LoginLink>
-                        </li>
+                        <>
+                            <li>
+                                <LoginLink className="bg-blue-300 px-1">Sign In</LoginLink>
+                            </li>
+                            <li>
+                                <RegisterLink className="bg-blue-300 px-1">Sign Up</RegisterLink>
+                            </li>
+                        </>
                     )
             }
         </ul>
