@@ -1,0 +1,29 @@
+{
+    "application": [
+        {
+            "id": "1",
+            "company": "Apple",
+            "position": "Full-stack",
+            "location": "Seattle",
+            "appliedat": "indeed",
+            "date": "the other day"
+        },
+        {
+            "id": "2",
+            "company": "Amazon",
+            "position": "Full-stack",
+            "location": "Seattle",
+            "appliedat": "indeed",
+            "date": "tomorrpw"
+        },
+        {
+            "id": "3",
+            "company": "Meta",
+            "position": "Full-stack",
+            "location": "Seattle",
+            "appliedat": "Indeed",
+            "date": "yesterday"
+        }
+    ]
+
+}

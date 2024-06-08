@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Nav from "./_components/Nav"
 import ClientButton from "./_components/clientButton";
 import LogInOut from "./_components/logInOut";
 import ClientDisplay from "./_components/clientDisplay";
@@ -19,6 +20,7 @@ export default function Home() {
   return (
     <main className="flex flex-col items-center justify-between p-4 space-y-6 h-screen">
       {/* SERVER RENDERABLE COMPONENTS */}
+      <Nav/>
       <div className="flex flex-row w-full justify-around items-center h-1/4">
 
         <div className="bg-slate-300 flex flex-col w-1/3 space-y-2">
@@ -36,6 +38,8 @@ export default function Home() {
           <input className="border-4" placeholder="Date" type="text" name="date"/>
           <button className="bg-blue-200" type="submit">Submit JobApp</button>
         </form>
+
+        
 
       </div>
       
