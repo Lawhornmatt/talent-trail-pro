@@ -2,11 +2,12 @@
 import React, {useState} from 'react';
 import Nav from '../_components/Nav'
 
+
 export default function Add() {
 
   const [error, setError] = useState(null);
 
-  function handleSubmit(e) {
+  function handleSubmit (e) {
     
     e.preventDefault();
 
