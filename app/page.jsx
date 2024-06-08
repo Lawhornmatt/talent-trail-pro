@@ -29,7 +29,7 @@ async function addJobApp() {
 async function reqUserData() {
 
   // Return this if failure
-  const yaFailed = { auth: null, db_user: null, db_jobs: null };
+  const yaFailed = {auth: null, db_user: null, db_jobs: null};
 
   try {
     // Collect user data from authentication service
@@ -69,7 +69,7 @@ async function reqUserData() {
         .toArray();
 
       // Return all the requested data as a central object
-      return { auth: kindeUserData, db_user: dbUserData[0], db_jobs: dbJobData };
+      return {auth: kindeUserData, db_user: dbUserData[0], db_jobs: dbJobData};
     };
 
   } catch (e) {
@@ -144,10 +144,6 @@ export default async function Home() {
     return(
       <main className="flex flex-col items-center justify-between space-y-6 h-screen">
         <p>Something Went Wrong</p>
-        <pre className="p-4 rounded bg-slate-950 text-green-300">   
-          Error:
-          {JSON.stringify(e, null, 2)}
-        </pre>
       </main>
     );
   }
