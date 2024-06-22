@@ -1,6 +1,5 @@
 'use client'
-
-export default function ClientDisplay() {
+export default function JobLister() {
 
     return (
         <div className="flex flex-row justify-around space-x-12 w-full h-3/4">
