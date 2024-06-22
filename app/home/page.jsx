@@ -3,6 +3,7 @@ import {getKindeServerSession} from "@kinde-oss/kinde-auth-nextjs/server";
 import clientPromise from "../_lib/mongodb";
 import Title from "../_components/Title";
 import FootNav from "../_components/FootNav";
+import JobLister from "../_components/JobLister";
 
 const {
   getBooleanFlag,
@@ -70,31 +71,23 @@ export default async function Home() {
   
  const jobData = allUserData.db_jobs;
 
+ const jobArray = [];
+
+ jobData.map((job) => {
+    let cleanJob = { 
+      company: job.company, 
+      title: job.job_title, 
+      status: job.status, 
+      creation: JSON.stringify(new Date(job.creation)) }
+    jobArray.push(cleanJob);
+ })
+
  return (
       <main className="flex flex-col items-center justify-start h-screen">
           <Title/>
           {/* <Nav/> */}    
           {/* THE CLIENT JOB LISTER */}
-          <div className="bg-blue-600 mt-3 w-full flex flex-col justify-center">
-              <p>number of applications: {jobData.length}</p>   
-              {jobData.map((job) => (
-                  <div key={job.creation} className="bg-blue-50">
-                  <div className="flex flex-row">
-                    <h1>Company</h1>
-                    <span>{job.company}</span>
-                  </div>
-                
-                    <h1>Job Title</h1>
-                      <p>{job.job_title}</p>
-                
-                    <h1>Status</h1>
-                      <p>{job.status}</p>
-                
-                    <h1>Date Applied</h1>
-                      <p>{JSON.stringify(new Date(job.creation))}</p>
-                  </div>
-              ))}
-          </div>
+          <JobLister jobData={jobArray}/>
           {/* Empty div simple to keep footer at bottom of page */}
           <div className="m-auto"></div>
           <FootNav/>
