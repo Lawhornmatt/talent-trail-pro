@@ -11,6 +11,14 @@ const {
   isAuthenticated
 } = getKindeServerSession();
 
+const SampleJob = {
+  company:"LETS GOOOOoooo",
+  job_title:"TESTING",
+  status:"DELETE ME",
+  creation: Date.now(),
+  from: "Matty"
+};
+
 // Requests all user data upon component mount
 async function reqUserData() {
 
@@ -66,26 +74,53 @@ async function reqUserData() {
 
 export default async function Home() {
  
-//  const application = await applicationsShow();
- const allUserData = await reqUserData();
+  //  const application = await applicationsShow();
+  const allUserData = await reqUserData();
+   
+  const jobData = allUserData.db_jobs;
   
- const jobData = allUserData.db_jobs;
+  const jobArray = [];
+  
+  jobData.map((job) => {
+     let cleanJob = { 
+       company: job.company, 
+       title: job.job_title, 
+       status: job.status, 
+       creation: JSON.stringify(new Date(job.creation)) }
+     jobArray.push(cleanJob);
+  })
 
- const jobArray = [];
+  //Adds a hard baked sample job to the online database
+  /*async function addJobToMongo() {
+    await client.db(process.env.MONGO_DB)
+        .collection("jobapps")
+        .insertOne(SampleJob);
+  }*/
 
- jobData.map((job) => {
-    let cleanJob = { 
-      company: job.company, 
-      title: job.job_title, 
-      status: job.status, 
-      creation: JSON.stringify(new Date(job.creation)) }
-    jobArray.push(cleanJob);
- })
+  const handleDelete = async () => {
+    "use server";
+    const client = await clientPromise;
+    await client.db(process.env.MONGO_DB)
+        .collection("jobapps")
+        .insertOne({
+          company:"LETS GOOOOoooo",
+          job_title:"TESTING",
+          status:"DELETE ME",
+          creation: Date.now(),
+          from: "Matty"
+        });
+  };
 
- return (
+  return (
       <main className="flex flex-col items-center justify-start h-screen">
           <Title/>
-          {/* <Nav/> */}    
+          
+          {/* <button className="bg-red-500" onClick={() => addJobToMongo}>ADD A JOB</button> */}
+
+          <form action={handleDelete}>
+            <button type="submit" className="bg-red-500">ADD A JOB</button>
+          </form>
+
           {/* THE CLIENT JOB LISTER */}
           <JobLister jobData={jobArray}/>
           {/* Empty div simple to keep footer at bottom of page */}
