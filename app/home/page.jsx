@@ -20,6 +20,7 @@ const SampleJob = {
 };
 
 // Requests all user data upon component mount
+// Done thru server
 async function reqUserData() {
 
   // Return this if failure
@@ -37,15 +38,21 @@ async function reqUserData() {
       const client = await clientPromise;
 
       // fetch user data based on the authentication kinde id (the k_id)
-      const dbUserData = await client.db(process.env.MONGO_DB).collection("users")
-       .find({ k_id: kindeUserData.id })
-       .toArray();
+      const dbUserData = await client
+        .db(process.env.MONGO_DB)
+        .collection("users")
+        // ATTENTION: I suspect this spot also needs to be serialized with JSON.stringify()
+        // Do later tho cuz I suspect it'll require us clearing all user data and repopulating
+        .find({ k_id: kindeUserData.id })
+        .toArray();
 
       // if there is no dbUserData, then user successfully authenticated
       // but has not used our product before and thus is not in database
       // as a first time log-in, add user to db
       if (!dbUserData[0]) {
-        await client.db(process.env.MONGO_DB).collection("users")
+        await client
+          .db(process.env.MONGO_DB)
+          .collection("users")
           .insertOne({
             username: kindeUserData.given_name,
             email: kindeUserData.email,
@@ -54,12 +61,16 @@ async function reqUserData() {
           }
         );
 
+        // This 'yaFailed' should be changed later
+        // For a better 1st user experience
         return yaFailed;
       };
 
       // Find all jobs attached to that database user id
-      const dbJobData = await client.db(process.env.MONGO_DB).collection("jobapps")
-        .find({ uid: dbUserData[0]._id})
+      const dbJobData = await client
+        .db(process.env.MONGO_DB)
+        .collection("jobapps")
+        .find({ uid: JSON.stringify(dbUserData[0]._id)})
         .toArray();
 
       // Return all the requested data as a central object
@@ -78,7 +89,9 @@ export default async function Home() {
   const allUserData = await reqUserData();
    
   const jobData = allUserData.db_jobs;
-  
+  const mongoUID = JSON.stringify(allUserData.db_user._id)
+  // console.log(allUserData.db_user);
+
   const jobArray = [];
   
   jobData.map((job) => {
@@ -97,18 +110,25 @@ export default async function Home() {
         .insertOne(SampleJob);
   }*/
 
-  const handleDelete = async () => {
+  // Server Action -- a function we can use by the user
+  const handleAddJob = async () => {
     "use server";
     const client = await clientPromise;
-    await client.db(process.env.MONGO_DB)
-        .collection("jobapps")
-        .insertOne({
-          company:"LETS GOOOOoooo",
-          job_title:"TESTING",
-          status:"DELETE ME",
-          creation: Date.now(),
-          from: "Matty"
-        });
+    try {
+      await client
+      .db(process.env.MONGO_DB)
+      .collection("jobapps")
+      .insertOne({
+        company:"This owrk?",
+        job_title:"TESTING",
+        status:"WhAts Up",
+        creation: Date.now(),
+        uid: mongoUID
+      });
+      console.log('Job Added');
+    } catch (e) {
+      console.error(e);
+    };
   };
 
   return (
@@ -117,7 +137,7 @@ export default async function Home() {
           
           {/* <button className="bg-red-500" onClick={() => addJobToMongo}>ADD A JOB</button> */}
 
-          <form action={handleDelete}>
+          <form action={handleAddJob}>
             <button type="submit" className="bg-red-500">ADD A JOB</button>
           </form>
 
