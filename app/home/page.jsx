@@ -1,11 +1,9 @@
 import Nav from "../_components/Nav";
 import {getKindeServerSession} from "@kinde-oss/kinde-auth-nextjs/server";
 import clientPromise from "../_lib/mongodb";
-
-// async function applicationsShow() {
-//   const res = await fetch ('API Here')
-//   return res.json;
-// }
+import Title from "../_components/Title";
+import FootNav from "../_components/FootNav";
+import JobLister from "../_components/JobLister";
 
 const {
   getBooleanFlag,
@@ -13,7 +11,16 @@ const {
   isAuthenticated
 } = getKindeServerSession();
 
+const SampleJob = {
+  company:"LETS GOOOOoooo",
+  job_title:"TESTING",
+  status:"DELETE ME",
+  creation: Date.now(),
+  from: "Matty"
+};
+
 // Requests all user data upon component mount
+// Done thru server
 async function reqUserData() {
 
   // Return this if failure
@@ -31,15 +38,21 @@ async function reqUserData() {
       const client = await clientPromise;
 
       // fetch user data based on the authentication kinde id (the k_id)
-      const dbUserData = await client.db(process.env.MONGO_DB).collection("users")
-       .find({ k_id: kindeUserData.id })
-       .toArray();
+      const dbUserData = await client
+        .db(process.env.MONGO_DB)
+        .collection("users")
+        // ATTENTION: I suspect this spot also needs to be serialized with JSON.stringify()
+        // Do later tho cuz I suspect it'll require us clearing all user data and repopulating
+        .find({ k_id: kindeUserData.id })
+        .toArray();
 
       // if there is no dbUserData, then user successfully authenticated
       // but has not used our product before and thus is not in database
       // as a first time log-in, add user to db
       if (!dbUserData[0]) {
-        await client.db(process.env.MONGO_DB).collection("users")
+        await client
+          .db(process.env.MONGO_DB)
+          .collection("users")
           .insertOne({
             username: kindeUserData.given_name,
             email: kindeUserData.email,
@@ -48,12 +61,16 @@ async function reqUserData() {
           }
         );
 
+        // This 'yaFailed' should be changed later
+        // For a better 1st user experience
         return yaFailed;
       };
 
       // Find all jobs attached to that database user id
-      const dbJobData = await client.db(process.env.MONGO_DB).collection("jobapps")
-        .find({ uid: dbUserData[0]._id})
+      const dbJobData = await client
+        .db(process.env.MONGO_DB)
+        .collection("jobapps")
+        .find({ uid: JSON.stringify(dbUserData[0]._id)})
         .toArray();
 
       // Return all the requested data as a central object
@@ -68,88 +85,67 @@ async function reqUserData() {
 
 export default async function Home() {
  
-//  const application = await applicationsShow();
- const allUserData = await reqUserData();
+  //  const application = await applicationsShow();
+  const allUserData = await reqUserData();
+   
+  const jobData = allUserData.db_jobs;
+  const mongoUID = JSON.stringify(allUserData.db_user._id)
+  // console.log(allUserData.db_user);
+
+  const jobArray = [];
   
- const jobData = allUserData.db_jobs;
+  jobData.map((job) => {
+     let cleanJob = { 
+       company: job.company, 
+       title: job.job_title, 
+       status: job.status, 
+       creation: JSON.stringify(new Date(job.creation)) }
+     jobArray.push(cleanJob);
+  })
 
-//  jobData.push({
-//   "company": "amazon",
-//   "job_title": "web developer",
-//   "status": "going",
-//   "creation": "2024-02-21T17:11:58.044+00:00"});
+  //Adds a hard baked sample job to the online database
+  /*async function addJobToMongo() {
+    await client.db(process.env.MONGO_DB)
+        .collection("jobapps")
+        .insertOne(SampleJob);
+  }*/
 
-//  console.log(jobData);
- 
-  
- return (
-      <main className="flex flex-col items-center justify-start p-4 space-y-6 h-screen">
-        <Nav/>
-        <h1> Hello Home </h1>
-        <p>number of applications: {jobData.length}</p>
-        <h1>Hardcode test</h1>
-        {/* {[{
-          "company": "amazon",
-          "job_title": "web developer",
-          "status": "going",
-          "creation": "2024-02-21T17:11:58.044+00:00"},
-          {
-            "company": "amazon",
-            "job_title": "web developer",
-            "status": "going",
-            "creation": "2024-02-21T17:11:58.044+00:00"},
-            {
-              "company": "amazon",
-              "job_title": "web developer",
-              "status": "going",
-              "creation": "2024-02-21T17:11:58.044+00:00"}]
-              .map((jobs) => (
-                <div key={jobs.creation}>
-            <h1>Company</h1>
-              <p>{jobs.company}</p>
+  // Server Action -- a function we can use by the user
+  const handleAddJob = async () => {
+    "use server";
+    const client = await clientPromise;
+    try {
+      await client
+      .db(process.env.MONGO_DB)
+      .collection("jobapps")
+      .insertOne({
+        company:"This owrk?",
+        job_title:"TESTING",
+        status:"WhAts Up",
+        creation: Date.now(),
+        uid: mongoUID
+      });
+      console.log('Job Added');
+    } catch (e) {
+      console.error(e);
+    };
+  };
 
-            <h1>Job Title</h1>
-              <p>{jobs.job_title}</p>
-            
-            <h1>Status</h1>
-              <p>{jobs.status}</p>
+  return (
+      <main className="flex flex-col items-center justify-start h-screen">
+          <Title/>
+          
+          {/* <button className="bg-red-500" onClick={() => addJobToMongo}>ADD A JOB</button> */}
 
-            <h1>Date Applied</h1>
-              <p>{jobs.creation}</p>
-          </div>
-              ))} */}
-        {/* {jobData.map((stuff) => (
-          <div key={stuff.creation}>
-            <h1>Company</h1>
-              <p>{stuff.company}</p>
+          <form action={handleAddJob}>
+            <button type="submit" className="bg-red-500">ADD A JOB</button>
+          </form>
 
-            <h1>Job Title</h1>
-              <p>{stuff.job_title}</p>
-            
-            <h1>Status</h1>
-              <p>{stuff.status}</p>
-
-            <h1>Date Applied</h1>
-              <p>{stuff.creation}</p>
-          </div>
-        {allUserData > 0 && <p className="noApps">No Applications? Time to start the trail!</p>}
-        ))} */}
-
-        {jobData.map((job) => (
-          <div key={job.creation}>
-          <h1>Company</h1>
-            <span>{job.company}</span>
-
-            <h1>Job Title</h1>
-              <p>{job.job_title}</p>
-            
-            <h1>Status</h1>
-              <p>{job.status}</p>
-
-            <h1>Date Applied</h1>
-              <p>{JSON.stringify(new Date(job.creation))}</p>
-          </div>
-        ))}
+          {/* THE CLIENT JOB LISTER */}
+          <JobLister jobData={jobArray}/>
+          {/* Empty div simple to keep footer at bottom of page */}
+          <div className="m-auto"></div>
+          <FootNav/>
       </main>
     );
   }

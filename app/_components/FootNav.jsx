@@ -5,15 +5,15 @@ import {RegisterLink, LoginLink, LogoutLink} from "@kinde-oss/kinde-auth-nextjs/
 
 export default function FootNav() {
     return (
-        <div className="bg-blue-600 w-full h-1/6 justify-around flex">
-            <div className="h-3 w-3 bg-green-500">
-                <span>A</span>
+        <div className="bg-blue-600 w-full h-9 justify-around flex">
+            <div className="bg-green-500">
+                <LogoutLink>LogOut</LogoutLink>
             </div>
-            <div className="h-3 w-3 bg-green-500">
-                <span>B</span>
+            <div className="bg-green-500">
+                <span>Settings</span>
             </div>
-            <div className="h-3 w-3 bg-green-500">
-                <span>C</span>
+            <div className="bg-green-500">
+                <span>AddJob</span>
             </div>
         </div>
     );

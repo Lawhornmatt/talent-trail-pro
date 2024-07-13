@@ -7,33 +7,14 @@ export default function Nav({ user }) {
     return (
         <ul className="flex flex-col items-center justify-around space-y-2">
             <li>
-                <Link href="/" className="bg-blue-300 px-1"> Login </Link>
-            </li>
-            <li>
-                <Link href="/home" className="bg-blue-300 px-1"> Home </Link>
-            </li>
-            <li>
                 <Link href="/add" className="bg-blue-300 px-1">Add</Link> 
             </li>
             <li>
                 <Link href="/settings" className="bg-blue-300 px-1">Settings</Link> 
             </li>
-            {
-            user ? (
-                        <li>
-                            <LogoutLink className="bg-blue-300 px-1">Log Out</LogoutLink>
-                        </li>
-                    ) : (
-                        <>
-                            <li>
-                                <LoginLink className="bg-blue-300 px-1">Sign In</LoginLink>
-                            </li>
-                            <li>
-                                <RegisterLink className="bg-blue-300 px-1">Sign Up</RegisterLink>
-                            </li>
-                        </>
-                    )
-            }
+            <li>
+                <LogoutLink className="bg-blue-300 px-1">Log Out</LogoutLink>
+            </li>
         </ul>
     );
 }
