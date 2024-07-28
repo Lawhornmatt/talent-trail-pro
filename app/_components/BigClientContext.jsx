@@ -4,23 +4,12 @@ import JobLister from "./JobLister";
 
 export default function ClientShenanigans(AllDatData) {
 
-    // console.log(AllDatData);
-
-    const jobArray = [];
-  
-    // jobData.map((job) => {
-    //    let cleanJob = { 
-        //  company: job.company, 
-        //  title: job.job_title, 
-        //  status: job.status, 
-        //  creation: JSON.stringify(new Date(job.creation)) }
-    //    jobArray.push(cleanJob);
-    // })
-
     return (
         <div className="w-full h-full flex flex-col">
+
                   {/* THE CLIENT JOB LISTER */}
                   <JobLister jobData={AllDatData.allUserData}/>
+                  
                   {/* Empty div simple to keep footer at bottom of page */}
                   <div className="m-auto"></div>
                   
