@@ -4,6 +4,7 @@ import clientPromise from "../_lib/mongodb";
 import Title from "../_components/Title";
 import FootNav from "../_components/FootNav";
 import JobLister from "../_components/JobLister";
+import ClientShenanigans from "../_components/BigClientContext";
 
 const {
   getBooleanFlag,
@@ -86,22 +87,34 @@ async function reqUserData() {
 export default async function Home() {
  
   //  const application = await applicationsShow();
+  const justJobs = [];
   const allUserData = await reqUserData();
+  const dostuff = allUserData.db_jobs.map(
+    job => (
+      justJobs.push({
+        company: job.company,
+        title: job.job_title, 
+        status: job.status, 
+        creation: JSON.stringify(new Date(job.creation)),
+        uid: job.uid,
+        id: JSON.stringify(job._id),
+      })
+    ));
+  // console.log(justJobs);
    
-  const jobData = allUserData.db_jobs;
-  const mongoUID = JSON.stringify(allUserData.db_user._id)
-  // console.log(allUserData.db_user);
+  // const jobData = allUserData.db_jobs;
+  // const mongoUID = JSON.stringify(allUserData.db_user._id)
 
-  const jobArray = [];
+  // const jobArray = [];
   
-  jobData.map((job) => {
-     let cleanJob = { 
-       company: job.company, 
-       title: job.job_title, 
-       status: job.status, 
-       creation: JSON.stringify(new Date(job.creation)) }
-     jobArray.push(cleanJob);
-  })
+  // jobData.map((job) => {
+  //    let cleanJob = { 
+  //      company: job.company, 
+  //      title: job.job_title, 
+  //      status: job.status, 
+  //      creation: JSON.stringify(new Date(job.creation)) }
+  //    jobArray.push(cleanJob);
+  // })
 
   //Adds a hard baked sample job to the online database
   /*async function addJobToMongo() {
@@ -111,41 +124,37 @@ export default async function Home() {
   }*/
 
   // Server Action -- a function we can use by the user
-  const handleAddJob = async () => {
-    "use server";
-    const client = await clientPromise;
-    try {
-      await client
-      .db(process.env.MONGO_DB)
-      .collection("jobapps")
-      .insertOne({
-        company:"This owrk?",
-        job_title:"TESTING",
-        status:"WhAts Up",
-        creation: Date.now(),
-        uid: mongoUID
-      });
-      console.log('Job Added');
-    } catch (e) {
-      console.error(e);
-    };
-  };
+  // const handleAddJob = async () => {
+  //   "use server";
+  //   const client = await clientPromise;
+  //   try {
+  //     await client
+  //     .db(process.env.MONGO_DB)
+  //     .collection("jobapps")
+  //     .insertOne({
+  //       company:"This owrk?",
+  //       job_title:"TESTING",
+  //       status:"WhAts Up",
+  //       creation: Date.now(),
+  //       uid: mongoUID
+  //     });
+  //     console.log('Job Added');
+  //   } catch (e) {
+  //     console.error(e);
+  //   };
+  // };
 
   return (
       <main className="flex flex-col items-center justify-start h-screen">
           <Title/>
           
           {/* <button className="bg-red-500" onClick={() => addJobToMongo}>ADD A JOB</button> */}
-
+{/* 
           <form action={handleAddJob}>
             <button type="submit" className="bg-red-500">ADD A JOB</button>
-          </form>
+          </form> */}
 
-          {/* THE CLIENT JOB LISTER */}
-          <JobLister jobData={jobArray}/>
-          {/* Empty div simple to keep footer at bottom of page */}
-          <div className="m-auto"></div>
-          <FootNav/>
+          <ClientShenanigans allUserData={justJobs}/>
       </main>
     );
   }
